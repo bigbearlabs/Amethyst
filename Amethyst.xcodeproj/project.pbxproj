@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		00AFB0374CBA4EBAA0014687 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0530B06777D42039F419322 /* libPods.a */; };
 		023D3F231856828C00391BEC /* AMFloatingLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 023D3F221856828C00391BEC /* AMFloatingLayout.m */; };
+		1305758318E10A25005E0EEF /* BBLTrackingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1305758218E10A25005E0EEF /* BBLTrackingWindow.m */; };
+		13F03EAC18E1B9E3000D225F /* TrackingWindowView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */; };
 		400299E4176393F10049001F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 400299E3176393F10049001F /* SenTestingKit.framework */; };
 		400299E5176393F10049001F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 402DB6E11742E41A00D1C936 /* Cocoa.framework */; };
 		400299EB176393F10049001F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 400299E9176393F10049001F /* InfoPlist.strings */; };
@@ -140,6 +142,10 @@
 /* Begin PBXFileReference section */
 		023D3F211856828C00391BEC /* AMFloatingLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMFloatingLayout.h; sourceTree = "<group>"; };
 		023D3F221856828C00391BEC /* AMFloatingLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMFloatingLayout.m; sourceTree = "<group>"; };
+		1305758118E10A25005E0EEF /* BBLTrackingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBLTrackingWindow.h; path = bbl/BBLTrackingWindow.h; sourceTree = "<group>"; };
+		1305758218E10A25005E0EEF /* BBLTrackingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLTrackingWindow.m; path = bbl/BBLTrackingWindow.m; sourceTree = "<group>"; };
+		1395B8A018E1003B006113C1 /* Amethyst copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Amethyst copy-Info.plist"; path = "/Users/ilo-robbie/dev/src/public/Amethyst/Amethyst copy-Info.plist"; sourceTree = "<absolute>"; };
+		13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackingWindowView.xib; sourceTree = "<group>"; };
 		3500E790DD334ACB848077E1 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 		400299E2176393F10049001F /* AmethystTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmethystTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		400299E3176393F10049001F /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -237,6 +243,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1305757B18E109F9005E0EEF /* window-tracking */ = {
+			isa = PBXGroup;
+			children = (
+				1305758118E10A25005E0EEF /* BBLTrackingWindow.h */,
+				1305758218E10A25005E0EEF /* BBLTrackingWindow.m */,
+				13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */,
+			);
+			name = "window-tracking";
+			sourceTree = "<group>";
+		};
 		400299E6176393F10049001F /* AmethystTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +279,7 @@
 		402DB6D51742E41A00D1C936 = {
 			isa = PBXGroup;
 			children = (
+				1305757B18E109F9005E0EEF /* window-tracking */,
 				40CD2F81176D0E5800251338 /* Sparkle */,
 				402DB6E71742E41A00D1C936 /* Amethyst */,
 				400299E6176393F10049001F /* AmethystTests */,
@@ -270,6 +287,7 @@
 				402DB6DF1742E41A00D1C936 /* Products */,
 				3500E790DD334ACB848077E1 /* Pods.xcconfig */,
 				E6950BE9E95C4952BCA05552 /* Pods-AmethystTests.xcconfig */,
+				1395B8A018E1003B006113C1 /* Amethyst copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -558,6 +576,7 @@
 			files = (
 				402DB6EC1742E41A00D1C936 /* InfoPlist.strings in Resources */,
 				402DB6F21742E41A00D1C936 /* Credits.rtf in Resources */,
+				13F03EAC18E1B9E3000D225F /* TrackingWindowView.xib in Resources */,
 				402DB6F81742E41A00D1C936 /* MainMenu.xib in Resources */,
 				404A5FAE18442CD5009B86D3 /* icon-statusitem-disabled.png in Resources */,
 				404A5FB018442CD5009B86D3 /* icon-statusitem-disabled@2x.png in Resources */,
@@ -703,6 +722,7 @@
 				40B337FB174993D40001D8FC /* AMScreenManager.m in Sources */,
 				404B0FFD1800EF7700309019 /* SIWindow+Amethyst.m in Sources */,
 				4015D9B0175054D200548DBE /* NSRunningApplication+Manageable.m in Sources */,
+				1305758318E10A25005E0EEF /* BBLTrackingWindow.m in Sources */,
 				023D3F231856828C00391BEC /* AMFloatingLayout.m in Sources */,
 				40D82F0117695D8B00DE1A40 /* AMColumnLayout.m in Sources */,
 				40A0A1FA18F1B401000B7614 /* AMWidescreenTallLayout.m in Sources */,

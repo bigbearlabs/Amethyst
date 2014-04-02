@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+
 @class AMScreenManager;
+
 
 // Object for managing the windows across all screens and spaces.
 @interface AMWindowManager : NSObject
