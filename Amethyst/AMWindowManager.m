@@ -151,9 +151,10 @@
 }
 
 - (AMScreenManager *)focusedScreenManager {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
+//  SIWindow *focusedWindow = [SIWindow focusedWindow];  // this can be nil for some SIWindows.
+  NSScreen* screen = NSScreen.mainScreen;
     for (AMScreenManager *screenManager in self.screenManagers) {
-        if ([screenManager.screen isEqual:focusedWindow.screen]) {
+        if ([screenManager.screen isEqual:screen]) {
             return screenManager;
         }
     }

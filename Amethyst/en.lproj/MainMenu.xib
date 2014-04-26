@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -33,6 +33,23 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="553"/>
+                <menuItem title="Windows" tag="701" id="bsd-aT-t1G">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Windows" id="wPG-KD-jOM">
+                        <items>
+                            <menuItem title="Item 1" id="Iol-bi-y4e">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="Item 2" id="xa4-Bi-QSf">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="Item 3" id="viZ-Is-FGG">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="hR8-Ro-rbQ"/>
                 <menuItem title="Quit Amethyst" keyEquivalent="q" id="545">
                     <connections>
                         <action selector="terminate:" target="-3" id="546"/>

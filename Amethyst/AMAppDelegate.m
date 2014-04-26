@@ -29,6 +29,23 @@
 - (IBAction)relaunch:(id)sender;
 @end
 
+@interface NSArray (functional)
+-(NSArray*) map:(id(^)(id))mapperBlock;
+@end
+
+@implementation NSArray (functional)
+
+-(NSArray*) map:(id(^)(id elem))mapperBlock {
+  NSMutableArray* mapped = [NSMutableArray array];  // TODO optimise with array size
+  for (id element in self) {
+    id result = mapperBlock(element);
+    [mapped addObject:result];
+  }
+  return mapped;
+}
+@end
+
+
 @implementation AMAppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
@@ -74,6 +91,49 @@
     NSString *myPath = [NSString stringWithFormat:@"%s", [[[NSBundle mainBundle] executablePath] fileSystemRepresentation]];
     [NSTask launchedTaskWithLaunchPath:myPath arguments:@[]];
     [NSApp terminate:self];
+}
+
+#pragma windows menu
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+  NSLog(@"menu activated");
+  if (menuItem.menu == self.statusItemMenu) {
+    [self buildWindowsMenu];
+  }
+  
+  return YES;
+}
+
+// TODO instantiate / populate lazily.
+-(void) buildWindowsMenu {
+  
+  //  [[NSClassFromString(@"RubyMotionAdapter") instance] update_menu:[self windowsForScreen:[NSScreen mainScreen]]];
+  
+  NSArray* windows = [self.windowManager windowsForScreen:NSScreen.mainScreen];
+  id menuItems = [windows map:^id(SIWindow* window) {
+    id title = [NSString stringWithFormat:@"%@ (%@)", window.title, window.app.title, nil];
+    SEL sel = @selector(menuItemSelected:);
+    id key = @"";
+    NSMenuItem* menuItem = [[NSMenuItem alloc] initWithTitle:title action:sel keyEquivalent:key];
+    menuItem.target = self;
+    menuItem.representedObject = window;
+    menuItem.state = window.floating ? NSOffState : NSOnState;  // TODO replace with binding.
+    return menuItem;
+  }];
+  
+  NSMenu* menu = [[NSMenu alloc] initWithTitle:@"Windows"];
+  for (NSMenuItem* item in menuItems) {
+    [menu addItem:item];
+  }
+  
+  [[self.statusItemMenu itemWithTag:701] setSubmenu:menu];
+}
+
+-(IBAction)menuItemSelected:(NSMenuItem*)sender {
+  SIWindow* window = sender.representedObject;
+  window.floating = ! window.floating;
+  
+  [self.windowManager markAllScreensForReflow];
 }
 
 @end

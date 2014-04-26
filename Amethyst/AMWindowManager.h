@@ -92,4 +92,6 @@
 
 - (void)markAllScreensForReflow;
 
+- (NSArray *)windowsForScreen:(NSScreen *)screen;
+
 @end
