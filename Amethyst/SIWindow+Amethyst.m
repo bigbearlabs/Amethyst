@@ -52,4 +52,30 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
     return YES;
 }
 
+- (NSNumber*) windowId {
+  NSNumber* windowId = nil;
+  
+  CFArrayRef windowDescriptions = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
+  pid_t processIdentifier = self.processIdentifier;
+  for (NSDictionary *dictionary in (__bridge NSArray *)windowDescriptions) {
+    pid_t windowOwnerProcessIdentifier = [dictionary[(__bridge NSString *)kCGWindowOwnerPID] intValue];
+    if (windowOwnerProcessIdentifier != processIdentifier) continue;
+    
+    CGRect windowFrame;
+    NSDictionary *boundsDictionary = dictionary[(__bridge NSString *)kCGWindowBounds];
+    CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)boundsDictionary, &windowFrame);
+    if (!CGRectEqualToRect(windowFrame, self.frame)) continue;
+    
+    NSString *windowTitle = dictionary[(__bridge NSString *)kCGWindowName];
+    if (![windowTitle isEqualToString:[self stringForKey:kAXTitleAttribute]]) continue;
+    
+    windowId = dictionary[(__bridge NSNumber*)kCGWindowNumber];
+    break;
+  }
+  
+  CFRelease(windowDescriptions);
+  
+  return windowId;
+}
+
 @end

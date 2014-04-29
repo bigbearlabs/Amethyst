@@ -27,4 +27,7 @@
 // the mouse cursor with changes in focus.
 - (BOOL)am_focusWindow;
 
+
+- (NSNumber*) windowId;
+
 @end
