@@ -69,13 +69,13 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
     NSString *windowTitle = dictionary[(__bridge NSString *)kCGWindowName];
     if (![windowTitle isEqualToString:[self stringForKey:kAXTitleAttribute]]) continue;
     
-    windowId = dictionary[(__bridge NSNumber*)kCGWindowNumber];
+    windowId = dictionary[(__bridge NSString*)kCGWindowNumber];
     break;
   }
   
   CFRelease(windowDescriptions);
   
-  return windowId;
+  return [windowId copy];
 }
 
 @end
