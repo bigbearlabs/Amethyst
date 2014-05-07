@@ -29,11 +29,6 @@
 }
 
 - (void)assignFrame:(CGRect)finalFrame toWindow:(SIWindow *)window focused:(BOOL)focused screenFrame:(CGRect)screenFrame {
-  
-  // don't size the focused window -- zoomed size will be restored by the window manager.
-  if (focused) return;
-
-  
     CGPoint finalPosition = finalFrame.origin;
 
     // Just resize the window

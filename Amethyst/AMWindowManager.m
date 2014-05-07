@@ -13,6 +13,7 @@
 #import "NSRunningApplication+Manageable.h"
 #import "SIAccessibilityElement.h"
 #import "SIWindow+Amethyst.h"
+#import "NSObject+AssociatedDictionary.h"
 
 @interface AMWindowManager () <AMScreenManagerDelegate>
 @property (nonatomic, strong) NSMutableArray *applications;
@@ -41,19 +42,14 @@
 @end
 
 @implementation AMWindowManager
-{
-  NSMutableDictionary* activatedFrames;
-  NSMutableDictionary* deactivatedFrames;
-}
+
+
 - (id)init {
     self = [super init];
     if (self) {
         self.applications = [NSMutableArray array];
         self.windows = [NSMutableArray array];
 
-        activatedFrames = [NSMutableDictionary dictionary];
-        deactivatedFrames = [NSMutableDictionary dictionary];
-      
         for (NSRunningApplication *runningApplication in NSWorkspace.sharedWorkspace.runningApplications) {
             if (!runningApplication.isManageable) continue;
 
@@ -476,8 +472,7 @@
                              handler:^(SIAccessibilityElement *accessibilityElement) {
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
                                  [self markScreenForReflow:focusedWindow.screen];
-															 
-                                 [self sizeWindow:focusedWindow toState:1];
+                               
                              }];
     [application observeNotification:kAXApplicationActivatedNotification
                          withElement:application
@@ -488,8 +483,6 @@
                                                                             object:nil];
                                  [self performSelector:@checkselector(self, applicationActivated:) withObject:nil afterDelay:0.1];
 															 
-                               // focused window will have changed -- get size.
-                               [self sizeWindow:SIWindow.focusedWindow toState:1];
                              }];
 }
 
@@ -564,14 +557,16 @@
                          withElement:window
                              handler:^(SIAccessibilityElement *accessibilityElement) {
                                  [self assignCurrentSpaceIdentifiers];
+                               
+                                 if ([window isEqual:[SIWindow focusedWindow]]) {
+                                   [self saveSizeForWindow:window forState:1];
+                                 }
                              }];
-
-
   [application observeNotification:kAXWindowResizedNotification
                        withElement:window
                            handler:^(SIAccessibilityElement *accessibilityElement) {
                              if ([window isEqual:[SIWindow focusedWindow]]) {
-                               [self updateSizeForWindow:window forState:1];
+                               [self saveSizeForWindow:window forState:1];
                              }
                            }];
 
@@ -690,30 +685,30 @@
 }
 
 
--(void) updateSizeForWindow:(SIWindow*)window forState:(NSUInteger)state {
-  NSMutableDictionary* dict;
-  if (state == 1) {
-    dict = activatedFrames;
-  } else {
-    dict = deactivatedFrames;
-  }
+-(void) saveSizeForWindow:(SIWindow*)window forState:(NSUInteger)state {
   if (window.windowId) {
-    dict[window.windowId] = [NSValue valueWithRect:[window frame]];
+
+    NSMutableDictionary* frames = [[NSApp delegate] associatedDictionary][@"zoomed_frames"];
+    if ( ! frames) {
+      frames = [@{} mutableCopy];
+      [[NSApp delegate] associatedDictionary][@"zoomed_frames"] = frames;
+    }
+    
+    frames[window.windowId] = [NSValue valueWithRect:[window frame]];
     NSLog(@"saved frame for window %@", window.windowId);
+    
+    id zoomedWindows = [[NSApp delegate] associatedDictionary][@"zoomed_windows"];
+    if ( ! zoomedWindows) {
+      zoomedWindows = [@[] mutableCopy];
+      [[NSApp delegate] associatedDictionary][@"zoomed_windows"] = zoomedWindows;
+    }
+    [zoomedWindows addObject:window.windowId];
   }
   else {
     NSLog(@"WOOPS nil windowId for %@", window);
   }
 }
 
--(void)sizeWindow:(SIWindow*)window toState:(NSUInteger)state {
-  if (state == 1) {  // focused
-    id rectEntry = activatedFrames[window.windowId];
-    if (rectEntry) {
-      NSLog(@"restoring frame for window %@", window.windowId);
-      NSRect focusedRect = [rectEntry rectValue];
-      [window setFrame:focusedRect];
-    }
   }
 }
 

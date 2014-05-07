@@ -8,6 +8,8 @@
 
 #import "AMWidescreenTallLayout.h"
 
+#import "NSObject+AssociatedDictionary.h"
+
 @interface AMWidescreenTallLayout ()
 // Ratio of screen width taken up by main pane
 @property (nonatomic, assign) CGFloat mainPaneRatio;
@@ -34,7 +36,7 @@
 
 - (void)reflowScreen:(NSScreen *)screen withWindows:(NSArray *)windows {
     if (windows.count == 0) return;
-
+  
     NSUInteger mainPaneCount = MIN(windows.count, self.mainPaneCount);
 
     NSInteger secondaryPaneCount = windows.count - mainPaneCount;
@@ -45,8 +47,11 @@
     CGFloat mainPaneWindowHeight = screenFrame.size.height;
     CGFloat secondaryPaneWindowHeight = (hasSecondaryPane ? round(screenFrame.size.height / secondaryPaneCount) : 0.0);
 
-    CGFloat mainPaneWindowWidth = round((screenFrame.size.width * (hasSecondaryPane ? self.mainPaneRatio : 1)) / mainPaneCount);
-    CGFloat secondaryPaneWindowWidth = screenFrame.size.width - mainPaneWindowWidth * mainPaneCount;
+    CGFloat margin = 30.0;  // horizontal margin to act as 'gutter'
+    CGFloat marginAppliedWidth = screenFrame.size.width - margin;
+
+    CGFloat mainPaneWindowWidth = round((marginAppliedWidth * (hasSecondaryPane ? self.mainPaneRatio : 1)) / mainPaneCount);
+    CGFloat secondaryPaneWindowWidth = marginAppliedWidth - mainPaneWindowWidth * mainPaneCount;
 
     SIWindow *focusedWindow = [SIWindow focusedWindow];
 
@@ -54,20 +59,33 @@
         SIWindow *window = windows[windowIndex];
         CGRect windowFrame;
 
-        if (windowIndex < mainPaneCount) {
-            windowFrame.origin.x = screenFrame.origin.x + mainPaneWindowWidth * windowIndex;
-            windowFrame.origin.y = screenFrame.origin.y;
-            windowFrame.size.width = mainPaneWindowWidth;
-            windowFrame.size.height = mainPaneWindowHeight;
+        // - if current window is popup, don't resize / reflow anything.
+        // - if zoom on, resize to zoomed frame.
+      
+        if ([window isEqual:focusedWindow] && [self isZoomed:window]) {
+          windowFrame = [[[NSApp delegate] associatedDictionary][@"zoomed_frames"][window.windowId] rectValue];
         } else {
-            windowFrame.origin.x = screenFrame.origin.x + mainPaneWindowWidth * mainPaneCount;
-            windowFrame.origin.y = screenFrame.origin.y + (secondaryPaneWindowHeight * (windowIndex - mainPaneCount));
-            windowFrame.size.width = secondaryPaneWindowWidth;
-            windowFrame.size.height = secondaryPaneWindowHeight;
+          if (windowIndex < mainPaneCount) {
+              windowFrame.origin.x = screenFrame.origin.x + mainPaneWindowWidth * windowIndex;
+              windowFrame.origin.y = screenFrame.origin.y;
+              windowFrame.size.width = mainPaneWindowWidth;
+              windowFrame.size.height = mainPaneWindowHeight;
+          } else {
+              windowFrame.origin.x = screenFrame.origin.x + mainPaneWindowWidth * mainPaneCount;
+              windowFrame.origin.y = screenFrame.origin.y + (secondaryPaneWindowHeight * (windowIndex - mainPaneCount));
+              windowFrame.size.width = secondaryPaneWindowWidth;
+              windowFrame.size.height = secondaryPaneWindowHeight;
+          }
         }
-
-        [self assignFrame:windowFrame toWindow:window focused:[window isEqualTo:focusedWindow] screenFrame:screenFrame];
+      
+        if ([focusedWindow isNormalWindow]) {
+          [self assignFrame:windowFrame toWindow:window focused:[window isEqualTo:focusedWindow] screenFrame:screenFrame];
+        }
     }
+}
+
+-(BOOL)isZoomed:(SIWindow*)window {
+  return [[[NSApp delegate] associatedDictionary][@"zoomed_windows"] containsObject:window.windowId];
 }
 
 - (void)expandMainPane {

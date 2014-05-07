@@ -5,6 +5,7 @@ pod 'ReactiveCocoa'
 pod 'IYLoginItem'
 pod 'CocoaLumberjack'
 pod 'Silica', :git => 'https://github.com/ianyh/Silica'
+pod 'ObjcAssociatedObjectHelpers'
 
 target :AmethystTests do
   pod 'Kiwi'
