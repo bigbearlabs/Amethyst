@@ -52,6 +52,7 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
     return YES;
 }
 
+// TODO memoise results.
 - (NSNumber*) windowId {
   NSNumber* windowId = nil;
   
@@ -66,11 +67,23 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
     CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)boundsDictionary, &windowFrame);
     if (!CGRectEqualToRect(windowFrame, self.frame)) continue;
     
-    NSString *windowTitle = dictionary[(__bridge NSString *)kCGWindowName];
-    if (![windowTitle isEqualToString:[self stringForKey:kAXTitleAttribute]]) continue;
+    NSString* title = self.title;
+    // CASE spotted some nils -- attempt to substitute with blank string.
+    if ( ! title)
+      title = @"";
     
-    windowId = dictionary[(__bridge NSString*)kCGWindowNumber];
+    NSString *windowTitle = dictionary[(__bridge NSString *)kCGWindowName];
+    if (![windowTitle isEqualToString:title]) continue;
+    
+    windowId = [dictionary[(__bridge NSString*)kCGWindowNumber] copy];
+//    windowId = CFDictionaryGetValue((__bridge CFDictionaryRef)dictionary, kCGWindowNumber);
+    
     break;
+  }
+  
+  //    debug
+  if ( ! windowId) {
+    NSLog(@"couldn't get window id from %@", windowDescriptions);
   }
   
   CFRelease(windowDescriptions);
