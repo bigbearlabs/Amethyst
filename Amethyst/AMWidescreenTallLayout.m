@@ -8,6 +8,7 @@
 
 #import "AMWidescreenTallLayout.h"
 
+#import "SIWindow+Amethyst.h"
 #import "NSObject+AssociatedDictionary.h"
 
 @interface AMWidescreenTallLayout ()
@@ -57,13 +58,12 @@
 
     for (NSUInteger windowIndex = 0; windowIndex < windows.count; ++windowIndex) {
         SIWindow *window = windows[windowIndex];
+
         CGRect windowFrame;
 
-        // - if current window is popup, don't resize / reflow anything.
         // - if zoom on, resize to zoomed frame.
-      
-        if ([window isEqual:focusedWindow] && [self isZoomed:window]) {
-          windowFrame = [[[NSApp delegate] associatedDictionary][@"zoomed_frames"][window.windowId] rectValue];
+        if ([window isEqual:focusedWindow] && [window isZoomed]) {
+          windowFrame = [window zoomedFrame];
         } else {
           if (windowIndex < mainPaneCount) {
               windowFrame.origin.x = screenFrame.origin.x + mainPaneWindowWidth * windowIndex;
@@ -76,16 +76,16 @@
               windowFrame.size.width = secondaryPaneWindowWidth;
               windowFrame.size.height = secondaryPaneWindowHeight;
           }
+          
+          // save unzoomed frame for later reference.
+          [window saveUnzoomedFrame:windowFrame];
         }
       
+        // - if focused window is e.g. popup, don't resize / reflow anything.
         if ([focusedWindow isNormalWindow]) {
           [self assignFrame:windowFrame toWindow:window focused:[window isEqualTo:focusedWindow] screenFrame:screenFrame];
         }
     }
-}
-
--(BOOL)isZoomed:(SIWindow*)window {
-  return [[[NSApp delegate] associatedDictionary][@"zoomed_windows"] containsObject:window.windowId];
 }
 
 - (void)expandMainPane {

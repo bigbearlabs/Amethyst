@@ -11,6 +11,7 @@
 
 #import <objc/runtime.h>
 #include <ApplicationServices/ApplicationServices.h>
+#import "NSObject+AssociatedDictionary.h"
 
 static void *SIWindowFloatingKey = &SIWindowFloatingKey;
 
@@ -68,9 +69,6 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
     if (!CGRectEqualToRect(windowFrame, self.frame)) continue;
     
     NSString* title = self.title;
-    // CASE spotted some nils -- attempt to substitute with blank string.
-    if ( ! title)
-      title = @"";
     
     NSString *windowTitle = dictionary[(__bridge NSString *)kCGWindowName];
     if (![windowTitle isEqualToString:title]) continue;
@@ -83,12 +81,48 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
   
   //    debug
   if ( ! windowId) {
-    NSLog(@"couldn't get window id from %@", windowDescriptions);
+    NSLog(@"couldn't get window id for %@ from %@", self, windowDescriptions);
   }
   
   CFRelease(windowDescriptions);
   
   return [windowId copy];
+}
+
+
+- (BOOL)isZoomed {
+  return [[[[NSApp delegate] associatedDictionary][@"zoomed_frames"] allKeys] containsObject:self.windowId];
+}
+
+
+- (CGRect)unzoomedFrame {
+  NSMutableDictionary* unzoomedFrames = [[NSApp delegate] associatedDictionary][@"unzoomed_frames"];
+  return [unzoomedFrames[self.windowId] rectValue];
+}
+
+- (void)saveUnzoomedFrame:(CGRect)frame {
+  NSMutableDictionary* unzoomedFrames = [[NSApp delegate] associatedDictionary][@"unzoomed_frames"];
+  if ( ! unzoomedFrames) {
+    unzoomedFrames = [@{} mutableCopy];
+    [[NSApp delegate] associatedDictionary][@"unzoomed_frames"] = unzoomedFrames;
+  }
+  
+  unzoomedFrames[self.windowId] = [NSValue valueWithRect:frame];
+}
+
+
+- (CGRect) zoomedFrame {
+  return [[[NSApp delegate] associatedDictionary][@"zoomed_frames"][self.windowId] rectValue];
+}
+
+- (void) saveZoomedFrame:(CGRect)frame {
+  NSMutableDictionary* frames = [[NSApp delegate] associatedDictionary][@"zoomed_frames"];
+  if ( ! frames) {
+    frames = [@{} mutableCopy];
+    [[NSApp delegate] associatedDictionary][@"zoomed_frames"] = frames;
+  }
+  
+  frames[self.windowId] = [NSValue valueWithRect:frame];
 }
 
 @end

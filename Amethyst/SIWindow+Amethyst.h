@@ -30,4 +30,16 @@
 
 - (NSNumber*) windowId;
 
+
+- (BOOL)isZoomed;
+
+
+- (CGRect)unzoomedFrame;
+
+- (void)saveUnzoomedFrame:(CGRect)frame;
+
+
+- (CGRect) zoomedFrame;
+
+- (void) saveZoomedFrame:(CGRect)frame;
 @end

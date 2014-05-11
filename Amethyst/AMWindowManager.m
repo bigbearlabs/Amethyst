@@ -558,16 +558,12 @@
                              handler:^(SIAccessibilityElement *accessibilityElement) {
                                  [self assignCurrentSpaceIdentifiers];
                                
-                                 if ([window isEqual:[SIWindow focusedWindow]]) {
                                    [self saveSizeForWindow:window forState:1];
-                                 }
                              }];
   [application observeNotification:kAXWindowResizedNotification
                        withElement:window
                            handler:^(SIAccessibilityElement *accessibilityElement) {
-                             if ([window isEqual:[SIWindow focusedWindow]]) {
                                [self saveSizeForWindow:window forState:1];
-                             }
                            }];
 
 }
@@ -686,23 +682,23 @@
 
 
 -(void) saveSizeForWindow:(SIWindow*)window forState:(NSUInteger)state {
-  if (window.windowId) {
 
-    NSMutableDictionary* frames = [[NSApp delegate] associatedDictionary][@"zoomed_frames"];
-    if ( ! frames) {
-      frames = [@{} mutableCopy];
-      [[NSApp delegate] associatedDictionary][@"zoomed_frames"] = frames;
-    }
+  if ( ! [window isEqual:[SIWindow focusedWindow]]) return;
+  
+  if (window.floating) return;
     
-    frames[window.windowId] = [NSValue valueWithRect:[window frame]];
-    NSLog(@"saved frame for window %@", window.windowId);
+  NSNumber* windowId = window.windowId;
+  // let's just try 1 more time.
+  if ( ! windowId) windowId = window.windowId;
     
-    id zoomedWindows = [[NSApp delegate] associatedDictionary][@"zoomed_windows"];
-    if ( ! zoomedWindows) {
-      zoomedWindows = [@[] mutableCopy];
-      [[NSApp delegate] associatedDictionary][@"zoomed_windows"] = zoomedWindows;
+  if (windowId) {
+    CGRect frame = [window frame];
+    if ( ! CGRectEqualToRect(frame, [window unzoomedFrame])) {
+      // frame is altered from unzoomed state: save.
+      [window saveZoomedFrame:frame];
+      
+      NSLog(@"saved frame for window %@", windowId);
     }
-    [zoomedWindows addObject:window.windowId];
   }
   else {
     NSLog(@"WOOPS nil windowId for %@", window);
