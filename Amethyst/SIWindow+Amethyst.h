@@ -8,6 +8,8 @@
 
 #import "SIWindow.h"
 
+@class BBLTrackingWindow;
+
 @interface SIWindow (Amethyst)
 
 // Returns YES if a window manager should be managing the size and position of
@@ -42,4 +44,10 @@
 - (CGRect) zoomedFrame;
 
 - (void) saveZoomedFrame:(CGRect)frame;
+
+
+@property(readonly) BBLTrackingWindow* overlay;
+
+- (void) updateOverlay;
+
 @end

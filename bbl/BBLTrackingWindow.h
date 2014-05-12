@@ -13,12 +13,10 @@
 
 -(BBLTrackingWindow*) initWithWindow:(SIWindow*)window windowManager:(AMWindowManager*)windowManager;
 
--(void) updateFrame:(SIWindow*)window;
+-(void) updateForWindow:(SIWindow*)window;
 
 -(void) hide;
 
 -(void) show;
-
-@property(weak) SIWindow* originalWindow;
 
 @end

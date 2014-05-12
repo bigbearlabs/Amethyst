@@ -11,9 +11,14 @@
 
 #import <objc/runtime.h>
 #include <ApplicationServices/ApplicationServices.h>
+
 #import "NSObject+AssociatedDictionary.h"
+#import "BBLTrackingWindow.h"
+#import "AMAppDelegate.h"
 
 static void *SIWindowFloatingKey = &SIWindowFloatingKey;
+
+
 
 @implementation SIWindow (Amethyst)
 
@@ -81,7 +86,7 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
   
   //    debug
   if ( ! windowId) {
-    NSLog(@"couldn't get window id for %@ from %@", self, windowDescriptions);
+    NSLog(@"couldn't get window id for %@. frame: %@", self, [NSValue valueWithRect:self.frame]);
   }
   
   CFRelease(windowDescriptions);
@@ -123,6 +128,48 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
   }
   
   frames[self.windowId] = [NSValue valueWithRect:frame];
+}
+
+
+- (BBLTrackingWindow*) overlay {
+  NSMutableDictionary* overlays = [[NSApp delegate] associatedDictionary][@"overlays"];
+  if ( ! overlays ) {
+    overlays = [@{} mutableCopy];
+    [[NSApp delegate] associatedDictionary][@"overlays"] = overlays;
+  }
+  
+  id windowId = self.windowId;
+  
+  // windowId relies on matching frames, so will return nil when window is moving or resizing. ignore in that case.
+  if ( ! windowId ) return nil;
+  
+  BBLTrackingWindow* overlay = overlays[windowId];
+  if ( ! overlay ) {
+    overlay = [[BBLTrackingWindow alloc] initWithWindow:self windowManager:[(AMAppDelegate*)[NSApp delegate] performSelector:@selector(windowManager)]];
+    overlays[windowId] = overlay;
+  }
+
+  return overlay;
+}
+
+- (void) updateOverlay {
+  [[self.class visibleOverlay] hide];
+  if (self.isNormalWindow) {
+    [self.overlay show];
+  
+    // update overlay tracking frame.
+    [self.overlay updateForWindow:self];
+  }
+}
+
+
++ (BBLTrackingWindow*) visibleOverlay {
+  for (BBLTrackingWindow* overlay in [[[NSApp delegate] associatedDictionary][@"overlays"] allValues]) {
+    if ( overlay.isVisible ) {
+      return overlay;
+    }
+  }
+  return nil;
 }
 
 @end

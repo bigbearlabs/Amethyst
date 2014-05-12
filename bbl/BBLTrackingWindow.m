@@ -25,8 +25,6 @@
 	
 	if (self) {
     [self setHasShadow:NO];
-    
-		self.originalWindow = window;
 		
 //				show simple poc view.
 		
@@ -41,7 +39,7 @@
 		
 		[self setLevel:NSFloatingWindowLevel];
 		
-		[self updateFrame:window];
+		[self updateForWindow:window];
 		
 
 //		show
@@ -50,7 +48,7 @@
 	return self;
 }
 
--(void) updateFrame:(SIWindow*)window {
+-(void) updateForWindow:(SIWindow*)window {
 	NSView* view = [self.contentView subviews][0];
 	CGFloat w = view.frame.size.width;
 	CGFloat h = view.frame.size.height;

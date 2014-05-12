@@ -14,6 +14,7 @@
 #import "SIAccessibilityElement.h"
 #import "SIWindow+Amethyst.h"
 #import "NSObject+AssociatedDictionary.h"
+#import "BBLTrackingWindow.h"
 
 @interface AMWindowManager () <AMScreenManagerDelegate>
 @property (nonatomic, strong) NSMutableArray *applications;
@@ -473,6 +474,8 @@
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
                                  [self markScreenForReflow:focusedWindow.screen];
                                
+                                 [focusedWindow updateOverlay];
+
                              }];
     [application observeNotification:kAXApplicationActivatedNotification
                          withElement:application
@@ -483,6 +486,8 @@
                                                                             object:nil];
                                  [self performSelector:@checkselector(self, applicationActivated:) withObject:nil afterDelay:0.1];
 															 
+                               id focusedWindow = SIWindow.focusedWindow;
+                               [focusedWindow updateOverlay];
                              }];
 }
 
@@ -558,12 +563,20 @@
                              handler:^(SIAccessibilityElement *accessibilityElement) {
                                  [self assignCurrentSpaceIdentifiers];
                                
-                                   [self saveSizeForWindow:window forState:1];
+                               [self saveSizeForWindow:window forState:1];
+                               
+                               if ([window isEqual:[SIWindow focusedWindow]]) {
+                                 [window updateOverlay];
+                               }
                              }];
   [application observeNotification:kAXWindowResizedNotification
                        withElement:window
                            handler:^(SIAccessibilityElement *accessibilityElement) {
-                               [self saveSizeForWindow:window forState:1];
+                             [self saveSizeForWindow:window forState:1];
+                             
+                             if ([window isEqual:[SIWindow focusedWindow]]) {
+                               [window updateOverlay];
+                             }
                            }];
 
 }
@@ -682,15 +695,15 @@
 
 
 -(void) saveSizeForWindow:(SIWindow*)window forState:(NSUInteger)state {
-
+  
   if ( ! [window isEqual:[SIWindow focusedWindow]]) return;
   
   if (window.floating) return;
-    
+
   NSNumber* windowId = window.windowId;
   // let's just try 1 more time.
   if ( ! windowId) windowId = window.windowId;
-    
+  
   if (windowId) {
     CGRect frame = [window frame];
     if ( ! CGRectEqualToRect(frame, [window unzoomedFrame])) {
