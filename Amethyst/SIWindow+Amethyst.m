@@ -131,6 +131,7 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
 }
 
 
+// SIWindows are not guaranteed to be unique. Work around by storing state in a global associated dictionary.
 - (BBLTrackingWindow*) overlay {
   NSMutableDictionary* overlays = [[NSApp delegate] associatedDictionary][@"overlays"];
   if ( ! overlays ) {

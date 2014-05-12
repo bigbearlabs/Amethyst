@@ -35,8 +35,8 @@
 		NSButton* button = [vc.view viewWithTag:101];
 		button.target = windowManager;
 		button.action = @selector(toggleFloat:);
-			
 		
+    
 		[self setLevel:NSFloatingWindowLevel];
 		
 		[self updateForWindow:window];
@@ -66,6 +66,7 @@
   // set the view frame.
 	view.frame = NSMakeRect(0, 0, w, h);
 	
+  // TODO update button state.
 }
 
 -(void) show {
