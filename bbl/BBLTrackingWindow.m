@@ -9,14 +9,14 @@
 
 
 #import "BBLTrackingWindow.h"
-#import "AMWindowManager.h"
+#import "SIWindow.h"
 
 @implementation BBLTrackingWindow
 {
 	NSViewController* vc;
 }
 
--(BBLTrackingWindow*) initWithWindow:(SIWindow*)window windowManager:(AMWindowManager*)windowManager {
+-(BBLTrackingWindow*) initWithWindow:(SIWindow*)window viewController:(NSViewController*)viewController {
 	
 	self = [super initWithContentRect:NSZeroRect
 														styleMask:NSBorderlessWindowMask|NSNonactivatingPanelMask
@@ -26,25 +26,19 @@
 	if (self) {
     [self setHasShadow:NO];
 		
-//				show simple poc view.
-		
-		vc = [[NSViewController alloc] initWithNibName:@"TrackingWindowView" bundle:nil];
-		[self.contentView addSubview:vc.view];
-
-
-		NSButton* button = [vc.view viewWithTag:101];
-		button.target = windowManager;
-		button.action = @selector(toggleFloat:);
-		
+		vc = viewController;
+    [self.contentView addSubview:vc.view];
     
 		[self setLevel:NSFloatingWindowLevel];
 		
 		[self updateForWindow:window];
 		
-
-//		show
-		[self orderFrontRegardless];
+    if ([[SIWindow focusedWindow] isEqual:window])
+      [self show];
+    else
+      [self hide];
 	}
+  
 	return self;
 }
 
@@ -75,16 +69,6 @@
 
 -(void) hide {
 	[self orderOut:self];
-}
-
-@end
-
-
-@implementation AMWindowManager (BBL_additions)
-
--(IBAction)toggleFloat:(id)sender {
-//	TODO assert focused window is my window.
-	[self toggleFloatForFocusedWindow];
 }
 
 @end

@@ -133,25 +133,28 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
 
 // SIWindows are not guaranteed to be unique. Work around by storing state in a global associated dictionary.
 - (BBLTrackingWindow*) overlay {
+  id windowId = self.windowId;
+  
+  // windowId relies on matching frames, so will return nil when window is moving or resizing. ignore in that case.
+  if ( ! windowId ) return nil;
+  
+  NSDictionary* overlays = self.overlays;
+  BBLTrackingWindow* overlay = overlays[windowId];
+
+  return overlay;
+}
+
+-(NSMutableDictionary*) overlays {
+  // get or init
   NSMutableDictionary* overlays = [[NSApp delegate] associatedDictionary][@"overlays"];
   if ( ! overlays ) {
     overlays = [@{} mutableCopy];
     [[NSApp delegate] associatedDictionary][@"overlays"] = overlays;
   }
   
-  id windowId = self.windowId;
-  
-  // windowId relies on matching frames, so will return nil when window is moving or resizing. ignore in that case.
-  if ( ! windowId ) return nil;
-  
-  BBLTrackingWindow* overlay = overlays[windowId];
-  if ( ! overlay ) {
-    overlay = [[BBLTrackingWindow alloc] initWithWindow:self windowManager:[(AMAppDelegate*)[NSApp delegate] performSelector:@selector(windowManager)]];
-    overlays[windowId] = overlay;
-  }
-
-  return overlay;
+  return overlays;
 }
+
 
 - (void) updateOverlay {
   [[self.class visibleOverlay] hide];
@@ -171,6 +174,16 @@ static void *SIWindowFloatingKey = &SIWindowFloatingKey;
     }
   }
   return nil;
+}
+
+- (void)setupOverlayWithViewController:(NSViewController*)viewController {
+  id windowId = self.windowId;
+  if ( ! windowId ) return;
+  
+  id overlay = [[BBLTrackingWindow alloc] initWithWindow:self viewController:viewController];
+  
+  
+  self.overlays[windowId] = overlay;
 }
 
 @end

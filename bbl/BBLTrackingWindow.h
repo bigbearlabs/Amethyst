@@ -11,7 +11,8 @@
 
 @interface BBLTrackingWindow : NSPanel
 
--(BBLTrackingWindow*) initWithWindow:(SIWindow*)window windowManager:(AMWindowManager*)windowManager;
+-(BBLTrackingWindow*) initWithWindow:(SIWindow*)window viewController:(NSViewController*)viewController;
+
 
 -(void) updateForWindow:(SIWindow*)window;
 

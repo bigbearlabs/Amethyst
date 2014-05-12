@@ -8,7 +8,8 @@
 
 #import "SIWindow.h"
 
-@class BBLTrackingWindow;
+#import "BBLTrackingWindow.h"
+
 
 @interface SIWindow (Amethyst)
 
@@ -35,19 +36,15 @@
 
 - (BOOL)isZoomed;
 
-
 - (CGRect)unzoomedFrame;
-
 - (void)saveUnzoomedFrame:(CGRect)frame;
 
-
 - (CGRect) zoomedFrame;
-
 - (void) saveZoomedFrame:(CGRect)frame;
 
+- (void) setupOverlayWithViewController:(NSViewController*)viewController;
+- (void) updateOverlay;
 
 @property(readonly) BBLTrackingWindow* overlay;
-
-- (void) updateOverlay;
 
 @end

@@ -467,6 +467,9 @@
                                 SIWindow *window = (SIWindow *)accessibilityElement;
                                 window.floating = floating;
                                 [self addWindow:window];
+                              
+                              [self setupOverlayForWindow:window];
+                              
                             }];
     [application observeNotification:kAXFocusedWindowChangedNotification
                          withElement:application
@@ -543,6 +546,9 @@
 		// AP default floating to true, so we can use a button to opt-in window management.
 		window.floating = YES;
 	
+    if ( ! window.overlay )
+      [self setupOverlayForWindow:window];
+  
     [application observeNotification:kAXUIElementDestroyedNotification
                          withElement:window
                             handler:^(SIAccessibilityElement *accessibilityElement) {
@@ -691,6 +697,24 @@
 
 - (NSArray *)activeWindowsForScreenManager:(AMScreenManager *)screenManager {
     return [self activeWindowsForScreen:screenManager.screen];
+}
+
+
+#pragma mark - 
+
+-(void) setupOverlayForWindow:(SIWindow*)window {
+  NSViewController* vc = [[NSViewController alloc] initWithNibName:@"TrackingWindowView" bundle:nil];
+
+  NSButton* button = [vc.view viewWithTag:101];
+  button.target = self;
+  button.action = @selector(toggleFloat:);
+
+  [window setupOverlayWithViewController:vc];
+}
+
+-(IBAction)toggleFloat:(id)sender {
+  //	TODO assert focused window is my window.
+	[self toggleFloatForFocusedWindow];
 }
 
 
