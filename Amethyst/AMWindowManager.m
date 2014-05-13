@@ -467,9 +467,6 @@
                                 SIWindow *window = (SIWindow *)accessibilityElement;
                                 window.floating = floating;
                                 [self addWindow:window];
-                              
-                              [self setupOverlayForWindow:window];
-                              
                             }];
     [application observeNotification:kAXFocusedWindowChangedNotification
                          withElement:application
@@ -477,7 +474,7 @@
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
                                  [self markScreenForReflow:focusedWindow.screen];
                                
-                                 [focusedWindow updateOverlay];
+                                 [self updateOverlayForWindow:focusedWindow];
 
                              }];
     [application observeNotification:kAXApplicationActivatedNotification
@@ -490,7 +487,7 @@
                                  [self performSelector:@checkselector(self, applicationActivated:) withObject:nil afterDelay:0.1];
 															 
                                id focusedWindow = SIWindow.focusedWindow;
-                               [focusedWindow updateOverlay];
+                               [self updateOverlayForWindow:focusedWindow];
                              }];
 }
 
@@ -710,6 +707,13 @@
   button.action = @selector(toggleFloat:);
 
   [window setupOverlayWithViewController:vc];
+}
+
+-(void) updateOverlayForWindow:(SIWindow*)window {
+  if ( ! window.overlay )
+    [self setupOverlayForWindow:window];
+  
+  [window updateOverlay];
 }
 
 -(IBAction)toggleFloat:(id)sender {
