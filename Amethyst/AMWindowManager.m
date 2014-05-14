@@ -8,15 +8,17 @@
 
 #import "AMWindowManager.h"
 
-#import "AMConfiguration.h"
-#import "AMScreenManager.h"
 #import "NSRunningApplication+Manageable.h"
 #import "SIAccessibilityElement.h"
-#import "SIWindow+Amethyst.h"
 #import "NSObject+AssociatedDictionary.h"
 #import "BBLTrackingWindow.h"
+#import "SIApplication.h"
+#import "SIWindow.h"
+#import "EXTSelectorChecking.h"
+#import "SIWindow+Amethyst.h"
+#import "SIApplication+Amethyst.h"
 
-@interface AMWindowManager () <AMScreenManagerDelegate>
+@interface AMWindowManager ()
 @property (nonatomic, strong) NSMutableArray *applications;
 @property (nonatomic, strong) NSMutableArray *windows;
 
@@ -38,12 +40,9 @@
 - (void)addWindow:(SIWindow *)window;
 - (void)removeWindow:(SIWindow *)window;
 
-- (void)updateScreenManagers;
-- (void)markScreenForReflow:(NSScreen *)screen;
 @end
 
 @implementation AMWindowManager
-
 
 - (id)init {
     self = [super init];
@@ -84,7 +83,6 @@
                                                      name:NSApplicationDidChangeScreenParametersNotification
                                                    object:nil];
 
-        [self updateScreenManagers];
     }
     return self;
 }
@@ -92,286 +90,6 @@
 - (void)dealloc {
     [NSWorkspace.sharedWorkspace.notificationCenter removeObserver:self];
     [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-#pragma mark Public Methods
-
-- (void)assignCurrentSpaceIdentifiers {
-    [[NSUserDefaults standardUserDefaults] removeSuiteNamed:@"com.apple.spaces"];
-    [[NSUserDefaults standardUserDefaults] addSuiteNamed:@"com.apple.spaces"];
-
-    NSArray *spaceProperties = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"SpacesDisplayConfiguration"][@"Space Properties"];
-    NSMutableDictionary *spaceIdentifiersByWindowNumber = [NSMutableDictionary dictionary];
-    for (NSDictionary *spaceDictionary in spaceProperties) {
-        NSArray *windows = spaceDictionary[@"windows"];
-        for (NSNumber *window in windows) {
-            if (spaceIdentifiersByWindowNumber[window]) {
-                spaceIdentifiersByWindowNumber[window] = [spaceIdentifiersByWindowNumber[window] arrayByAddingObject:spaceDictionary[@"name"]];
-            } else {
-                spaceIdentifiersByWindowNumber[window] = @[ spaceDictionary[@"name"] ];
-            }
-        }
-    }
-
-    CFArrayRef windowDescriptions = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
-
-    for (NSDictionary *description in (__bridge NSArray *)windowDescriptions) {
-        if ([description[(__bridge NSString *)kCGWindowOwnerName] isEqualToString:@"Dock"]) {
-            continue;
-        }
-        NSNumber *windowNumber = description[(__bridge NSString *)kCGWindowNumber];
-        NSArray *spaceIdentifiers = spaceIdentifiersByWindowNumber[windowNumber];
-
-        if (spaceIdentifiers.count == 1) {
-            AMScreenManager *screenManager = [self screenManagerForCGWindowDescription:description];
-            if (screenManager) {
-                screenManager.currentSpaceIdentifier = spaceIdentifiers[0];
-            }
-        }
-    }
-
-    CFRelease(windowDescriptions);
-}
-
-- (AMScreenManager *)screenManagerForCGWindowDescription:(NSDictionary *)description {
-    CGRect windowFrame;
-    CFDictionaryRef windowFrameDict = (__bridge CFDictionaryRef)description[(__bridge NSString *)kCGWindowBounds];
-    CGRectMakeWithDictionaryRepresentation(windowFrameDict, &windowFrame);
-
-    CGFloat lastVolume = 0;
-    AMScreenManager *lastScreenManager = nil;
-
-    for (AMScreenManager *screenManager in self.screenManagers) {
-        CGRect screenFrame = [screenManager.screen frameIncludingDockAndMenu];
-        CGRect intersection = CGRectIntersection(windowFrame, screenFrame);
-        CGFloat volume = intersection.size.width * intersection.size.height;
-
-        if (volume > lastVolume) {
-            lastVolume = volume;
-            lastScreenManager = screenManager;
-        }
-    }
-
-    return lastScreenManager;
-}
-
-- (AMScreenManager *)focusedScreenManager {
-//  SIWindow *focusedWindow = [SIWindow focusedWindow];  // this can be nil for some SIWindows.
-  NSScreen* screen = NSScreen.mainScreen;
-    for (AMScreenManager *screenManager in self.screenManagers) {
-        if ([screenManager.screen isEqual:screen]) {
-            return screenManager;
-        }
-    }
-    return nil;
-}
-
-- (void)throwToScreenAtIndex:(NSUInteger)screenIndex {
-    screenIndex = screenIndex - 1;
-
-    if (screenIndex >= NSScreen.screens.count) return;
-
-    AMScreenManager *screenManager = self.screenManagers[screenIndex];
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-
-    // Have to find the managed window object so that we can clear it's screen cache.
-    for (SIWindow *window in self.windows) {
-        if ([window isEqual:focusedWindow]) {
-            focusedWindow = window;
-        }
-    }
-
-    // If the window is already on the screen do nothing.
-    if ([focusedWindow.screen isEqual:screenManager.screen]) return;
-
-    [self markScreenForReflow:focusedWindow.screen];
-    [focusedWindow moveToScreen:screenManager.screen];
-    [self markScreenForReflow:screenManager.screen];
-    [focusedWindow am_focusWindow];
-}
-
-- (void)focusScreenAtIndex:(NSUInteger)screenIndex {
-    screenIndex = screenIndex - 1;
-
-    if (screenIndex >= NSScreen.screens.count) return;
-
-    AMScreenManager *screenManager = self.screenManagers[screenIndex];
-    NSArray *windows = [self windowsForScreen:screenManager.screen];
-
-    if (windows.count == 0) return;
-
-    [windows[0] am_focusWindow];
-}
-
-- (void)moveFocusCounterClockwise {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow) {
-        [self focusScreenAtIndex:1];
-        return;
-    }
-
-    NSScreen *screen = focusedWindow.screen;
-    NSArray *windows = [self windowsForScreen:screen];
-
-    // If there are no windows there is nothing to change focus to.
-    if (windows.count == 0) return;
-
-    NSUInteger windowIndex = [windows indexOfObject:focusedWindow];
-    if (windowIndex == NSNotFound) {
-        windowIndex = 0;
-    }
-
-    NSUInteger windowToFocusIndex = (windowIndex == 0 ? windows.count - 1 : windowIndex - 1);
-    SIWindow *windowToFocus = windows[windowToFocusIndex];
-
-    [windowToFocus am_focusWindow];
-}
-
-- (void)moveFocusClockwise {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow) {
-        [self focusScreenAtIndex:1];
-        return;
-    }
-
-    NSScreen *screen = focusedWindow.screen;
-    NSArray *windows = [self windowsForScreen:screen];
-
-    // If there are no windows there is nothing to change focus to.
-    if (windows.count == 0) return;
-
-    NSUInteger windowIndex = [windows indexOfObject:focusedWindow];
-    if (windowIndex == NSNotFound) {
-        windowIndex = windows.count - 1;
-    }
-
-    SIWindow *windowToFocus = windows[(windowIndex + 1) % windows.count];
-
-    [windowToFocus am_focusWindow];
-}
-
-- (void)swapFocusedWindowToMain {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow || focusedWindow.floating) return;
-
-    NSScreen *screen = focusedWindow.screen;
-    NSArray *windows = [self activeWindowsForScreen:screen];
-
-    if (windows.count == 0) return;
-
-    NSUInteger mainWindowIndex = [self.windows indexOfObject:windows[0]];
-    NSUInteger focusedWindowIndex = [self.windows indexOfObject:focusedWindow];
-    if (focusedWindowIndex == NSNotFound) {
-        return;
-    }
-
-    [self.windows exchangeObjectAtIndex:focusedWindowIndex withObjectAtIndex:mainWindowIndex];
-    [self markScreenForReflow:focusedWindow.screen];
-    [focusedWindow am_focusWindow];
-}
-
-- (void)swapFocusedWindowCounterClockwise {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow || focusedWindow.floating) {
-        [self focusScreenAtIndex:1];
-        return;
-    }
-
-    NSScreen *screen = focusedWindow.screen;
-    NSArray *windows = [self activeWindowsForScreen:screen];
-
-    NSUInteger focusedWindowIndex = [windows indexOfObject:focusedWindow];
-    if (focusedWindowIndex == NSNotFound) return;
-
-    SIWindow *windowToSwapWith = windows[(focusedWindowIndex == 0 ? windows.count - 1 : focusedWindowIndex - 1)];
-
-    NSUInteger focusedWindowActiveIndex = [self.windows indexOfObject:focusedWindow];
-    NSUInteger windowToSwapWithActiveIndex = [self.windows indexOfObject:windowToSwapWith];
-
-    [self.windows exchangeObjectAtIndex:focusedWindowActiveIndex withObjectAtIndex:windowToSwapWithActiveIndex];
-    [self markScreenForReflow:focusedWindow.screen];
-    [focusedWindow am_focusWindow];
-}
-
-- (void)swapFocusedWindowClockwise {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow || focusedWindow.floating) {
-        [self focusScreenAtIndex:1];
-        return;
-    }
-
-    NSScreen *screen = focusedWindow.screen;
-    NSArray *windows = [self activeWindowsForScreen:screen];
-
-    NSUInteger focusedWindowIndex = [windows indexOfObject:focusedWindow];
-    if (focusedWindowIndex == NSNotFound) return;
-
-    SIWindow *windowToSwapWith = windows[(focusedWindowIndex + 1) % windows.count];
-
-    NSUInteger focusedWindowActiveIndex = [self.windows indexOfObject:focusedWindow];
-    NSUInteger windowToSwapWithActiveIndex = [self.windows indexOfObject:windowToSwapWith];
-
-    [self.windows exchangeObjectAtIndex:focusedWindowActiveIndex withObjectAtIndex:windowToSwapWithActiveIndex];
-    [self markScreenForReflow:focusedWindow.screen];
-    [focusedWindow am_focusWindow];
-}
-
-- (void)swapFocusedWindowScreenClockwise {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow || focusedWindow.floating) {
-        [self focusScreenAtIndex:1];
-        return;
-    }
-
-    NSScreen *screen = focusedWindow.screen;
-    NSUInteger screenIndex = [self.screenManagers indexOfObjectPassingTest:^BOOL(AMScreenManager *screenManager, NSUInteger idx, BOOL *stop) {
-        if ([screenManager.screen isEqual:screen]) {
-            *stop = YES;
-            return YES;
-        }
-        return NO;
-    }];
-
-    screenIndex = screenIndex + 1 % self.screenManagers.count;
-
-    NSScreen *screenToMoveTo = [self.screenManagers[screenIndex] screen];
-    [focusedWindow moveToScreen:screenToMoveTo];
-
-    [self markScreenForReflow:screen];
-    [self markScreenForReflow:screenToMoveTo];
-}
-
-- (void)swapFocusedWindowScreenCounterClockwise {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow || focusedWindow.floating) {
-        [self focusScreenAtIndex:1];
-        return;
-    }
-
-    NSScreen *screen = focusedWindow.screen;
-    NSUInteger screenIndex = [self.screenManagers indexOfObjectPassingTest:^BOOL(AMScreenManager *screenManager, NSUInteger idx, BOOL *stop) {
-        if ([screenManager.screen isEqual:screen]) {
-            *stop = YES;
-            return YES;
-        }
-        return NO;
-    }];
-
-    screenIndex = (screenIndex == 0 ? self.screenManagers.count - 1 : screenIndex - 1);
-
-    NSScreen *screenToMoveTo = [self.screenManagers[screenIndex] screen];
-    [focusedWindow moveToScreen:screenToMoveTo];
-
-    [self markScreenForReflow:screen];
-    [self markScreenForReflow:screenToMoveTo];
-}
-
-- (void)pushFocusedWindowToSpace:(NSUInteger)space {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow) return;
-
-    [focusedWindow moveToSpace:space];
-    [focusedWindow am_focusWindow];
 }
 
 #pragma mark Notification Handlers
@@ -401,8 +119,6 @@
 }
 
 - (void)activeSpaceDidChange:(NSNotification *)notification {
-    [self assignCurrentSpaceIdentifiers];
-
     for (NSRunningApplication *runningApplication in [[NSWorkspace sharedWorkspace] runningApplications]) {
         if (!runningApplication.isManageable) continue;
 
@@ -416,25 +132,10 @@
             }
         }
     }
-
-    for (AMScreenManager *screenManager in self.screenManagers) {
-        NSArray *windows = [self activeWindowsForScreenManager:screenManager];
-        __block BOOL isFullScreen = NO;
-        [windows enumerateObjectsUsingBlock:^(SIWindow *window, NSUInteger idx, BOOL *stop) {
-            if (window.isFullScreen) {
-                isFullScreen = YES;
-                *stop = YES;
-            }
-        }];
-
-        screenManager.isFullScreen = isFullScreen;
-    }
-
-    [self markAllScreensForReflow];
 }
 
 - (void)screenParametersDidChange:(NSNotification *)notification {
-    [self updateScreenManagers];
+//    [self updateScreenManagers];
 }
 
 #pragma mark Applications Management
@@ -472,7 +173,7 @@
                          withElement:application
                              handler:^(SIAccessibilityElement *accessibilityElement) {
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
-                                 [self markScreenForReflow:focusedWindow.screen];
+//                                 [self markScreenForReflow:focusedWindow.screen];
                                
                                  [self updateOverlayForWindow:focusedWindow];
 
@@ -480,7 +181,7 @@
     [application observeNotification:kAXApplicationActivatedNotification
                          withElement:application
                              handler:^(SIAccessibilityElement *accessibilityElement) {
-																 DDLogVerbose(@"application activated: %@", application);
+																 NSLog(@"application activated: %@", application);
                                  [NSObject cancelPreviousPerformRequestsWithTarget:self
                                                                           selector:@checkselector(self, applicationActivated:)
                                                                             object:nil];
@@ -494,7 +195,7 @@
 - (void)applicationActivated:(id)sender {
     SIWindow *focusedWindow = [SIWindow focusedWindow];
     if (!focusedWindow.isFullScreen) {
-        [self markScreenForReflow:focusedWindow.screen];
+//        [self markScreenForReflow:focusedWindow.screen];
     }
 }
 
@@ -509,7 +210,7 @@
     pid_t processIdentifier = application.processIdentifier;
     for (SIWindow *window in [self.windows copy]) {
         if (window.processIdentifier == processIdentifier) {
-            [self markScreenForReflow:window.screen];
+//            [self markScreenForReflow:window.screen];
         }
     }
 }
@@ -518,7 +219,7 @@
     pid_t processIdentifier = application.processIdentifier;
     for (SIWindow *window in [self.windows copy]) {
         if (window.processIdentifier == processIdentifier) {
-            [self markScreenForReflow:window.screen];
+//            [self markScreenForReflow:window.screen];
         }
     }
 }
@@ -531,12 +232,12 @@
     if (!window.shouldBeManaged) return;
 
     [self.windows addObject:window];
-    [self markScreenForReflow:window.screen];
+//    [self markScreenForReflow:window.screen];
 
     SIApplication *application = [self applicationWithProcessIdentifier:window.processIdentifier];
 
     window.floating = application.floating;
-    if (AMConfiguration.sharedConfiguration.floatSmallWindows && window.frame.size.width < 500 && window.frame.size.height < 500) {
+    if (window.frame.size.width < 500 && window.frame.size.height < 500) {
         window.floating = YES;
     }
 
@@ -554,17 +255,16 @@
     [application observeNotification:kAXWindowMiniaturizedNotification
                          withElement:window
                             handler:^(SIAccessibilityElement *accessibilityElement) {
-                                [self markScreenForReflow:window.screen];
+//                                [self markScreenForReflow:window.screen];
                             }];
     [application observeNotification:kAXWindowDeminiaturizedNotification
                          withElement:window
                             handler:^(SIAccessibilityElement *accessibilityElement) {
-                                [self markScreenForReflow:window.screen];
+//                                [self markScreenForReflow:window.screen];
                             }];
     [application observeNotification:kAXWindowMovedNotification
                          withElement:window
                              handler:^(SIAccessibilityElement *accessibilityElement) {
-                                 [self assignCurrentSpaceIdentifiers];
                                
                                [self saveSizeForWindow:window forState:1];
                                
@@ -585,7 +285,7 @@
 }
 
 - (void)removeWindow:(SIWindow *)window {
-    [self markAllScreensForReflow];
+//    [self markAllScreensForReflow];
 
     SIApplication *application = [self applicationWithProcessIdentifier:window.processIdentifier];
     [application unobserveNotification:kAXUIElementDestroyedNotification withElement:window];
@@ -615,87 +315,15 @@
     for (SIWindow *window in self.windows) {
         if ([window isEqual:focusedWindow]) {
             window.floating = !window.floating;
-            [self markScreenForReflow:window.screen];
+//            [self markScreenForReflow:window.screen];
             return;
         }
     }
 
     [self addWindow:focusedWindow];
     focusedWindow.floating = NO;
-    [self markScreenForReflow:focusedWindow.screen];
+//    [self markScreenForReflow:focusedWindow.screen];
 }
-
-#pragma mark Screen Management
-
-- (void)updateScreenManagers {
-    NSMutableArray *screenManagers = [NSMutableArray arrayWithCapacity:NSScreen.screens.count];
-
-    for (NSScreen *screen in NSScreen.screens) {
-        AMScreenManager *screenManager;
-
-        for (AMScreenManager *oldScreenManager in self.screenManagers) {
-            if ([oldScreenManager.screen isEqual:screen]) {
-                screenManager = oldScreenManager;
-                break;
-            }
-        }
-
-        if (!screenManager) {
-            screenManager = [[AMScreenManager alloc] initWithScreen:screen delegate:self];
-        }
-
-        [screenManagers addObject:screenManager];
-    }
-
-    // Window managers are sorted by screen position along the x-axis.
-    [screenManagers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        NSScreen *screen1 = ((AMScreenManager *)obj1).screen;
-        NSScreen *screen2 = ((AMScreenManager *)obj2).screen;
-
-        CGFloat x1 = screen1.frameWithoutDockOrMenu.origin.x;
-        CGFloat x2 = screen2.frameWithoutDockOrMenu.origin.x;
-
-        if (x1 > x2) {
-            return NSOrderedDescending;
-        } else if (x1 < x2) {
-            return NSOrderedAscending;
-        } else {
-            return NSOrderedSame;
-        }
-    }];
-
-    self.screenManagers = screenManagers;
-
-    [self assignCurrentSpaceIdentifiers];
-    [self markAllScreensForReflow];
-}
-
-- (void)markAllScreensForReflow {
-    for (AMScreenManager *screenManager in self.screenManagers) {
-        [screenManager setNeedsReflow];
-    }
-}
-
-- (void)markScreenForReflow:(NSScreen *)screen {
-    for (AMScreenManager *screenManager in self.screenManagers) {
-        if ([screenManager.screen isEqual:screen]) {
-            [screenManager setNeedsReflow];
-        }
-    }
-}
-
-- (void)displayCurrentLayout {
-    for (AMScreenManager *screenManager in self.screenManagers) {
-        [screenManager displayLayoutHUD];
-    }
-}
-
-#pragma mark AMScreenManagerDelegate
-
-- (NSArray *)activeWindowsForScreenManager:(AMScreenManager *)screenManager {
-    return [self activeWindowsForScreen:screenManager.screen];
-}
-
 
 #pragma mark - 
 

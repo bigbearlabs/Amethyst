@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+
 @class AMWindowManager;
+#import "SIWindow.h"
 
 @interface BBLTrackingWindow : NSPanel
 
