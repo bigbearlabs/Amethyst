@@ -142,10 +142,9 @@
 /* Begin PBXFileReference section */
 		023D3F211856828C00391BEC /* AMFloatingLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMFloatingLayout.h; sourceTree = "<group>"; };
 		023D3F221856828C00391BEC /* AMFloatingLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMFloatingLayout.m; sourceTree = "<group>"; };
-		1305758118E10A25005E0EEF /* BBLTrackingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBLTrackingWindow.h; path = bbl/BBLTrackingWindow.h; sourceTree = "<group>"; };
-		1305758218E10A25005E0EEF /* BBLTrackingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLTrackingWindow.m; path = bbl/BBLTrackingWindow.m; sourceTree = "<group>"; };
-		1395B8A018E1003B006113C1 /* Amethyst copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Amethyst copy-Info.plist"; path = "/Users/ilo-robbie/dev/src/public/Amethyst/Amethyst copy-Info.plist"; sourceTree = "<absolute>"; };
-		13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackingWindowView.xib; sourceTree = "<group>"; };
+		1305758118E10A25005E0EEF /* BBLTrackingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBLTrackingWindow.h; path = Amethyst/bbl/BBLTrackingWindow.h; sourceTree = "<group>"; };
+		1305758218E10A25005E0EEF /* BBLTrackingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLTrackingWindow.m; path = Amethyst/bbl/BBLTrackingWindow.m; sourceTree = "<group>"; };
+		13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TrackingWindowView.xib; path = Amethyst/bbl/TrackingWindowView.xib; sourceTree = "<group>"; };
 		3500E790DD334ACB848077E1 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 		400299E2176393F10049001F /* AmethystTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmethystTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		400299E3176393F10049001F /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -287,7 +286,6 @@
 				402DB6DF1742E41A00D1C936 /* Products */,
 				3500E790DD334ACB848077E1 /* Pods.xcconfig */,
 				E6950BE9E95C4952BCA05552 /* Pods-AmethystTests.xcconfig */,
-				1395B8A018E1003B006113C1 /* Amethyst copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
