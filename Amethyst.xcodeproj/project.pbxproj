@@ -10,6 +10,12 @@
 		00AFB0374CBA4EBAA0014687 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0530B06777D42039F419322 /* libPods.a */; };
 		023D3F231856828C00391BEC /* AMFloatingLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 023D3F221856828C00391BEC /* AMFloatingLayout.m */; };
 		1305758318E10A25005E0EEF /* BBLTrackingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1305758218E10A25005E0EEF /* BBLTrackingWindow.m */; };
+		13BA2AB41924D71A008B9567 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 402DB6E11742E41A00D1C936 /* Cocoa.framework */; };
+		13BA2ABA1924D71A008B9567 /* citrine_extract.m in Sources */ = {isa = PBXBuildFile; fileRef = 13BA2AB91924D71A008B9567 /* citrine_extract.m */; };
+		13BA2AD91924D734008B9567 /* AMWindowManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4010E7F1174540220066097B /* AMWindowManager.m */; };
+		13BA2AE11924D8FB008B9567 /* AMWindowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4010E7F0174540220066097B /* AMWindowManager.h */; };
+		13BA2AE21924D905008B9567 /* BBLTrackingWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1305758118E10A25005E0EEF /* BBLTrackingWindow.h */; };
+		13BA2AE31924D905008B9567 /* BBLTrackingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1305758218E10A25005E0EEF /* BBLTrackingWindow.m */; };
 		13F03EAC18E1B9E3000D225F /* TrackingWindowView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */; };
 		400299E4176393F10049001F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 400299E3176393F10049001F /* SenTestingKit.framework */; };
 		400299E5176393F10049001F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 402DB6E11742E41A00D1C936 /* Cocoa.framework */; };
@@ -76,6 +82,7 @@
 		5C09C2AB18C1400F00CF5E6A /* AMRowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C09C2AA18C1400F00CF5E6A /* AMRowLayout.m */; };
 		5CC5FEE718C5083500895144 /* AMRowLayoutTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC5FEE618C5083500895144 /* AMRowLayoutTest.m */; };
 		6718BDA0D79F4A19BED950F4 /* libPods-AmethystTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3BFE9CAC8A4496793B4217D /* libPods-AmethystTests.a */; };
+		B4EC3B3F8CEE4E6798A09EDA /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0530B06777D42039F419322 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +151,14 @@
 		023D3F221856828C00391BEC /* AMFloatingLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMFloatingLayout.m; sourceTree = "<group>"; };
 		1305758118E10A25005E0EEF /* BBLTrackingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BBLTrackingWindow.h; path = Amethyst/bbl/BBLTrackingWindow.h; sourceTree = "<group>"; };
 		1305758218E10A25005E0EEF /* BBLTrackingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BBLTrackingWindow.m; path = Amethyst/bbl/BBLTrackingWindow.m; sourceTree = "<group>"; };
+		13BA2AB31924D71A008B9567 /* libcitrine-extract.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcitrine-extract.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13BA2AB71924D71A008B9567 /* citrine-extract-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "citrine-extract-Prefix.pch"; sourceTree = "<group>"; };
+		13BA2AB81924D71A008B9567 /* citrine_extract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = citrine_extract.h; sourceTree = "<group>"; };
+		13BA2AB91924D71A008B9567 /* citrine_extract.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = citrine_extract.m; sourceTree = "<group>"; };
+		13BA2AC01924D71A008B9567 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		13BA2AC81924D71A008B9567 /* citrine-extractTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "citrine-extractTests-Info.plist"; sourceTree = "<group>"; };
+		13BA2ACA1924D71A008B9567 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		13BA2ACC1924D71A008B9567 /* citrine_extractTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = citrine_extractTests.m; sourceTree = "<group>"; };
 		13F03EAB18E1B9E3000D225F /* TrackingWindowView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TrackingWindowView.xib; path = Amethyst/bbl/TrackingWindowView.xib; sourceTree = "<group>"; };
 		3500E790DD334ACB848077E1 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 		400299E2176393F10049001F /* AmethystTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmethystTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -216,6 +231,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		13BA2AB01924D71A008B9567 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BA2AB41924D71A008B9567 /* Cocoa.framework in Frameworks */,
+				B4EC3B3F8CEE4E6798A09EDA /* libPods.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		400299DE176393F10049001F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -252,6 +276,42 @@
 			name = "window-tracking";
 			sourceTree = "<group>";
 		};
+		13BA2AB51924D71A008B9567 /* citrine-extract */ = {
+			isa = PBXGroup;
+			children = (
+				13BA2AB81924D71A008B9567 /* citrine_extract.h */,
+				13BA2AB91924D71A008B9567 /* citrine_extract.m */,
+				13BA2AB61924D71A008B9567 /* Supporting Files */,
+			);
+			path = "citrine-extract";
+			sourceTree = "<group>";
+		};
+		13BA2AB61924D71A008B9567 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				13BA2AB71924D71A008B9567 /* citrine-extract-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		13BA2AC61924D71A008B9567 /* citrine-extractTests */ = {
+			isa = PBXGroup;
+			children = (
+				13BA2ACC1924D71A008B9567 /* citrine_extractTests.m */,
+				13BA2AC71924D71A008B9567 /* Supporting Files */,
+			);
+			path = "citrine-extractTests";
+			sourceTree = "<group>";
+		};
+		13BA2AC71924D71A008B9567 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				13BA2AC81924D71A008B9567 /* citrine-extractTests-Info.plist */,
+				13BA2AC91924D71A008B9567 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		400299E6176393F10049001F /* AmethystTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -282,6 +342,8 @@
 				40CD2F81176D0E5800251338 /* Sparkle */,
 				402DB6E71742E41A00D1C936 /* Amethyst */,
 				400299E6176393F10049001F /* AmethystTests */,
+				13BA2AB51924D71A008B9567 /* citrine-extract */,
+				13BA2AC61924D71A008B9567 /* citrine-extractTests */,
 				402DB6E01742E41A00D1C936 /* Frameworks */,
 				402DB6DF1742E41A00D1C936 /* Products */,
 				3500E790DD334ACB848077E1 /* Pods.xcconfig */,
@@ -294,6 +356,7 @@
 			children = (
 				402DB6DE1742E41A00D1C936 /* Amethyst.app */,
 				400299E2176393F10049001F /* AmethystTests.octest */,
+				13BA2AB31924D71A008B9567 /* libcitrine-extract.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,6 +367,7 @@
 				402DB6FE1742E44E00D1C936 /* Carbon.framework */,
 				402DB6E11742E41A00D1C936 /* Cocoa.framework */,
 				400299E3176393F10049001F /* SenTestingKit.framework */,
+				13BA2AC01924D71A008B9567 /* XCTest.framework */,
 				402DB6E31742E41A00D1C936 /* Other Frameworks */,
 				B0530B06777D42039F419322 /* libPods.a */,
 				F3BFE9CAC8A4496793B4217D /* libPods-AmethystTests.a */,
@@ -439,7 +503,38 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		13BA2AB11924D71A008B9567 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BA2AE21924D905008B9567 /* BBLTrackingWindow.h in Headers */,
+				13BA2AE11924D8FB008B9567 /* AMWindowManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		13BA2AB21924D71A008B9567 /* citrine-extract */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13BA2AD71924D71A008B9567 /* Build configuration list for PBXNativeTarget "citrine-extract" */;
+			buildPhases = (
+				1BF14A9A162C4328BE99C112 /* Check Pods Manifest.lock */,
+				13BA2AAF1924D71A008B9567 /* Sources */,
+				13BA2AB01924D71A008B9567 /* Frameworks */,
+				13BA2AB11924D71A008B9567 /* Headers */,
+				6687A56CC07446DF9D3939E7 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "citrine-extract";
+			productName = "citrine-extract";
+			productReference = 13BA2AB31924D71A008B9567 /* libcitrine-extract.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		400299E1176393F10049001F /* AmethystTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 400299F2176393F10049001F /* Build configuration list for PBXNativeTarget "AmethystTests" */;
@@ -512,6 +607,7 @@
 			targets = (
 				402DB6DD1742E41A00D1C936 /* Amethyst */,
 				400299E1176393F10049001F /* AmethystTests */,
+				13BA2AB21924D71A008B9567 /* citrine-extract */,
 			);
 		};
 /* End PBXProject section */
@@ -589,6 +685,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1BF14A9A162C4328BE99C112 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		2009177CB0564662B8D8773B /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -628,6 +739,21 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/bash;
 			shellScript = "rm -rf \"/Applications/$FULL_PRODUCT_NAME\"\ncp -R \"$INSTALL_DIR/$FULL_PRODUCT_NAME\" \"/Applications\"";
+		};
+		6687A56CC07446DF9D3939E7 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		75325DC6A6114F52971C92AF /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -674,6 +800,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		13BA2AAF1924D71A008B9567 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BA2ABA1924D71A008B9567 /* citrine_extract.m in Sources */,
+				13BA2AE31924D905008B9567 /* BBLTrackingWindow.m in Sources */,
+				13BA2AD91924D734008B9567 /* AMWindowManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		400299DD176393F10049001F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -732,6 +868,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		13BA2AC91924D71A008B9567 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				13BA2ACA1924D71A008B9567 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		400299E9176393F10049001F /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -767,6 +911,49 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		13BA2ACE1924D71A008B9567 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3500E790DD334ACB848077E1 /* Pods.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "citrine-extract/citrine-extract-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		13BA2ACF1924D71A008B9567 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3500E790DD334ACB848077E1 /* Pods.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "citrine-extract/citrine-extract-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		400299F0176393F10049001F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E6950BE9E95C4952BCA05552 /* Pods-AmethystTests.xcconfig */;
@@ -893,6 +1080,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		13BA2AD71924D71A008B9567 /* Build configuration list for PBXNativeTarget "citrine-extract" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13BA2ACE1924D71A008B9567 /* Debug */,
+				13BA2ACF1924D71A008B9567 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		400299F2176393F10049001F /* Build configuration list for PBXNativeTarget "AmethystTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

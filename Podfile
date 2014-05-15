@@ -1,6 +1,6 @@
 platform :osx, '10.9'
 
-link_with 'Amethyst', 'citrine-extract'
+link_with 'citrine-extract'
 
 pod 'libextobjc/EXTSelectorChecking'
 pod 'ReactiveCocoa'

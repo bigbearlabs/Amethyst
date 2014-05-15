@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/bigbearlabs/Amethyst.git", :tag => "0.0.1" }
+  s.source       = { :git => "https://github.com/bigbearlabs/Amethyst.git", :tag => "0.0.2" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -89,11 +89,12 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = 
-    "Amethyst/**/AMWindowManager.{h,m}", 
+  s.source_files  =     
+  # "Amethyst/citrine-extract"
     "Amethyst/**/NSRunningApplication+*.{h,m}",
+    "Amethyst/**/BBLTrackingWindow.{h,m}",
     "Amethyst/**/SIWindow+*.{h,m}",
-    "Amethyst/**/BBLTrackingWindow*.{h,m}",
+    "Amethyst/**/AMWindowManager.{h,m}", 
 
   s.exclude_files = "Classes/Exclude"
 
