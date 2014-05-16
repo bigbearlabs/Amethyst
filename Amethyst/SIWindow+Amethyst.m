@@ -13,7 +13,7 @@
 
 #import "NSObject+AssociatedDictionary.h"
 #import "BBLTrackingWindow.h"
-#import "AMAppDelegate.h"
+//#import "AMAppDelegate.h"
 
 static void *SIWindowFloatingKey = &SIWindowFloatingKey;
 
