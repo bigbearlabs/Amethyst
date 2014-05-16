@@ -11,7 +11,6 @@
 #import "NSRunningApplication+Manageable.h"
 #import "SIAccessibilityElement.h"
 #import "NSObject+AssociatedDictionary.h"
-#import "BBLTrackingWindow.h"
 #import "SIApplication.h"
 #import "SIWindow.h"
 #import "EXTSelectorChecking.h"
@@ -174,28 +173,17 @@
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
 //                                 [self markScreenForReflow:focusedWindow.screen];
                                
-                                 [self updateOverlayForWindow:focusedWindow];
+                                 [self onFocusedWindowChanged:focusedWindow];
 
                              }];
     [application observeNotification:kAXApplicationActivatedNotification
                          withElement:application
                              handler:^(SIAccessibilityElement *accessibilityElement) {
-																 NSLog(@"application activated: %@", application);
                                  [NSObject cancelPreviousPerformRequestsWithTarget:self
                                                                           selector:@checkselector(self, applicationActivated:)
                                                                             object:nil];
                                  [self performSelector:@checkselector(self, applicationActivated:) withObject:nil afterDelay:0.1];
-															 
-                               id focusedWindow = SIWindow.focusedWindow;
-                               [self updateOverlayForWindow:focusedWindow];
                              }];
-}
-
-- (void)applicationActivated:(id)sender {
-    SIWindow *focusedWindow = [SIWindow focusedWindow];
-    if (!focusedWindow.isFullScreen) {
-//        [self markScreenForReflow:focusedWindow.screen];
-    }
 }
 
 - (void)removeApplication:(SIApplication *)application {
@@ -240,11 +228,7 @@
 //        window.floating = YES;
 //    }
 
-		// AP default floating to true, so we can use a button to opt-in window management.
-		window.floating = YES;
-	
-    if ( ! window.overlay )
-      [self setupOverlayForWindow:window];
+    [self onAddWindow:window];
   
     [application observeNotification:kAXUIElementDestroyedNotification
                          withElement:window
@@ -264,21 +248,12 @@
     [application observeNotification:kAXWindowMovedNotification
                          withElement:window
                              handler:^(SIAccessibilityElement *accessibilityElement) {
-                               
-                               [self saveSizeForWindow:window forState:1];
-                               
-                               if ([window isEqual:[SIWindow focusedWindow]]) {
-                                 [window updateOverlay];
-                               }
+                               [self onWindowMoved:window];
                              }];
   [application observeNotification:kAXWindowResizedNotification
                        withElement:window
                            handler:^(SIAccessibilityElement *accessibilityElement) {
-                             [self saveSizeForWindow:window forState:1];
-                             
-                             if ([window isEqual:[SIWindow focusedWindow]]) {
-                               [window updateOverlay];
-                             }
+                               [self onWindowResized:window];
                            }];
 
 }
@@ -324,53 +299,51 @@
 //    [self markScreenForReflow:focusedWindow.screen];
 }
 
-#pragma mark - 
 
--(void) setupOverlayForWindow:(SIWindow*)window {
-  NSViewController* vc = [[NSViewController alloc] initWithNibName:@"TrackingWindowView" bundle:nil];
+#pragma mark - realisation.
 
-  NSButton* button = [vc.view viewWithTag:101];
-  button.target = self;
-  button.action = @selector(toggleFloat:);
+//# old-style handler for AX events.
 
-  [window setupOverlayWithViewController:vc];
-}
-
--(void) updateOverlayForWindow:(SIWindow*)window {
-  if ( ! window.overlay )
-    [self setupOverlayForWindow:window];
+- (void)applicationActivated:(id)sender {
   
-  [window updateOverlay];
-}
-
--(IBAction)toggleFloat:(id)sender {
-  //	TODO assert focused window is my window.
-	[self toggleFloatForFocusedWindow];
-}
-
-
--(void) saveSizeForWindow:(SIWindow*)window forState:(NSUInteger)state {
+  NSLog(@"application activated: %@", @"TODO pass in the app");
   
-  if ( ! [window isEqual:[SIWindow focusedWindow]]) return;
-  
-  if (window.floating) return;
-
-  NSNumber* windowId = window.windowId;
-  // let's just try 1 more time.
-  if ( ! windowId) windowId = window.windowId;
-  
-  if (windowId) {
-    CGRect frame = [window frame];
-    if ( ! CGRectEqualToRect(frame, [window unzoomedFrame])) {
-      // frame is altered from unzoomed state: save.
-      [window saveZoomedFrame:frame];
-      
-      NSLog(@"saved frame for window %@", windowId);
-    }
+  SIWindow *focusedWindow = [SIWindow focusedWindow];
+  if (!focusedWindow.isFullScreen) {
+    //        [self markScreenForReflow:focusedWindow.screen];
   }
-  else {
-    NSLog(@"WOOPS nil windowId for %@", window);
+  
+//  [self updateOverlayForWindow:focusedWindow];
+}
+
+
+//# new-style handler for EX events.
+
+-(void) onAddWindow:(SIWindow*)window {
+  // AP default floating to true, so we can use a button to opt-in window management.
+  window.floating = YES;
+	
+//  if ( ! window.overlay )
+//    [self setupOverlayForWindow:window];
+}
+
+-(void) onFocusedWindowChanged:(SIWindow*)focusedWindow {
+//  [self updateOverlayForWindow:focusedWindow];
+}
+
+-(void) onWindowMoved:(SIWindow*)window {
+//  [self saveSizeForWindow:window forState:1];
+  
+  if ([window isEqual:[SIWindow focusedWindow]]) {
+    [window updateOverlay];
   }
 }
 
+-(void) onWindowResized:(SIWindow*)window {
+//  [self saveSizeForWindow:window forState:1];
+  
+  if ([window isEqual:[SIWindow focusedWindow]]) {
+    [window updateOverlay];
+  }
+}
 @end
