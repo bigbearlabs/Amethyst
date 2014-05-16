@@ -18,12 +18,7 @@
     return YES;
 }
 
-@end
-
-
 // duped from Silica 0.1.4 to unblock citrine-extract.
-@implementation NSRunningApplication (Silica)
-
 - (BOOL)isAgent {
   NSURL *bundleInfoPath = [[self.bundleURL URLByAppendingPathComponent:@"Contents"] URLByAppendingPathComponent:@"Info.plist"];
   NSDictionary *applicationBundleInfoDictionary = [NSDictionary dictionaryWithContentsOfURL:bundleInfoPath];
