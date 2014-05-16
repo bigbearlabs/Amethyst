@@ -7,7 +7,6 @@
 //
 
 #import "SIWindow+Amethyst.h"
-#import "AMConfiguration.h"
 
 #import <objc/runtime.h>
 #include <ApplicationServices/ApplicationServices.h>
