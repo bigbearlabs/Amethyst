@@ -17,18 +17,13 @@ Pod::Spec.new do |s|
 
   s.name         = "citrine-extract"
   s.version      = "0.0.1"
-  s.summary      = "A short description of citrine-extract."
+  s.summary      = "An experimental private pod for OS X window management."
 
   s.description  = <<-DESC
-                   A longer description of citrine-extract in Markdown format.
-
-                   * Think: Why did you write this? What is the focus? What does it do?
-                   * CocoaPods will be using this to generate tags, and improve search results.
-                   * Try to keep it short, snappy and to the point.
-                   * Finally, don't worry about the indent, CocoaPods strips it!
+      citrine-extract is a pod extracted from the Amethyst project for embedding in OS X apps that need window tracking.
                    DESC
 
-  s.homepage     = "http://EXAMPLE/citrine-extract"
+  s.homepage     = "https://github.com/bigbearlabs/Amethyst.git"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -78,7 +73,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/bigbearlabs/Amethyst.git", :tag => "0.0.2" }
+  s.source       = { :git => "https://github.com/bigbearlabs/Amethyst.git", :tag => "citrine-extract-0.0.1" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -90,10 +85,11 @@ Pod::Spec.new do |s|
   #
 
   s.source_files  =     
-  # "Amethyst/citrine-extract"
+    # "Amethyst/citrine-extract"
     "Amethyst/**/NSRunningApplication+*.{h,m}",
-    "Amethyst/**/BBLTrackingWindow.{h,m}",
     "Amethyst/**/SIWindow+*.{h,m}",
+    # "Amethyst/**/SIApplication*.{h,m}", 
+    "Amethyst/**/BBLTrackingWindow.{h,m}",
     "Amethyst/**/AMWindowManager.{h,m}", 
 
   s.exclude_files = "Classes/Exclude"
@@ -134,17 +130,12 @@ Pod::Spec.new do |s|
   #  where they will only apply to your library. If you depend on other Podspecs
   #  you can include multiple dependencies to ensure it works.
 
-  # s.requires_arc = true
+  s.requires_arc = true
 
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
-  # s.dependency "JSONKit", "~> 1.4"
 
   s.dependency 'libextobjc/EXTSelectorChecking'
-  s.dependency 'ReactiveCocoa'
-  # s.dependency 'IYLoginItem'
-  s.dependency 'CocoaLumberjack'
-  # s.dependency 'Silica', :git => 'https://github.com/ianyh/Silica'
-  s.dependency 'Silica'
+  s.dependency 'Silica', '0.1.4'
   s.dependency 'ObjcAssociatedObjectHelpers'
 
 end
