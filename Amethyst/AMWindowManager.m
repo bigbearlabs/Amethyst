@@ -16,7 +16,6 @@
 #import "SIWindow.h"
 #import "EXTSelectorChecking.h"
 #import "SIWindow+Amethyst.h"
-#import "SIApplication+Amethyst.h"
 
 @interface AMWindowManager ()
 @property (nonatomic, strong) NSMutableArray *applications;
@@ -159,14 +158,14 @@
         [self addWindow:window];
     }
 
-    BOOL floating = application.floating;
+//    BOOL floating = application.floating;
 
     [application observeNotification:kAXWindowCreatedNotification
                          withElement:application
                             handler:^(SIAccessibilityElement *accessibilityElement) {
                                 [[NSUserDefaults standardUserDefaults] addSuiteNamed:@"com.apple.spaces"];
                                 SIWindow *window = (SIWindow *)accessibilityElement;
-                                window.floating = floating;
+//                                window.floating = floating;
                                 [self addWindow:window];
                             }];
     [application observeNotification:kAXFocusedWindowChangedNotification
@@ -236,10 +235,10 @@
 
     SIApplication *application = [self applicationWithProcessIdentifier:window.processIdentifier];
 
-    window.floating = application.floating;
-    if (window.frame.size.width < 500 && window.frame.size.height < 500) {
-        window.floating = YES;
-    }
+//    window.floating = application.floating;
+//    if (window.frame.size.width < 500 && window.frame.size.height < 500) {
+//        window.floating = YES;
+//    }
 
 		// AP default floating to true, so we can use a button to opt-in window management.
 		window.floating = YES;
