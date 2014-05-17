@@ -475,7 +475,7 @@
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
                                  [self markScreenForUpdate:focusedWindow.screen];
                                
-                                 [delegate onFocusedWindowChanged:focusedWindow];
+                                 [delegate onFocused:focusedWindow];
 
                              }];
     [application observeNotification:kAXApplicationActivatedNotification
@@ -530,7 +530,7 @@
 //        window.floating = YES;
 //    }
 
-    [delegate onAddWindow:window];
+    [delegate onAdded:window];
   
     [application observeNotification:kAXUIElementDestroyedNotification
                          withElement:window
@@ -550,12 +550,12 @@
     [application observeNotification:kAXWindowMovedNotification
                          withElement:window
                              handler:^(SIAccessibilityElement *accessibilityElement) {
-                               [delegate onWindowMoved:window];
+                               [delegate onMoved:window];
                              }];
   [application observeNotification:kAXWindowResizedNotification
                        withElement:window
                            handler:^(SIAccessibilityElement *accessibilityElement) {
-                               [delegate onWindowResized:window];
+                               [delegate onResized:window];
                            }];
 
 }
@@ -699,7 +699,7 @@
 
 //# new-style handler for EX events.
 
--(void) onAddWindow:(SIWindow*)window {
+-(void) onAdded:(SIWindow*)window {
   // AP default floating to true, so we can use a button to opt-in window management.
   window.floating = YES;
 	
@@ -707,11 +707,11 @@
 //    [self setupOverlayForWindow:window];
 }
 
--(void) onFocusedWindowChanged:(SIWindow*)focusedWindow {
+-(void) onFocused:(SIWindow*)window {
 //  [self updateOverlayForWindow:focusedWindow];
 }
 
--(void) onWindowMoved:(SIWindow*)window {
+-(void) onMoved:(SIWindow*)window {
 //  [self saveSizeForWindow:window forState:1];
   
   if ([window isEqual:[SIWindow focusedWindow]]) {
@@ -719,7 +719,7 @@
   }
 }
 
--(void) onWindowResized:(SIWindow*)window {
+-(void) onResized:(SIWindow*)window {
 //  [self saveSizeForWindow:window forState:1];
   
   if ([window isEqual:[SIWindow focusedWindow]]) {
