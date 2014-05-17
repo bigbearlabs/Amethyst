@@ -41,10 +41,15 @@
 @end
 
 @implementation AMWindowManager
+{
+  id delegate;
+}
 
-- (id)init {
+- (id)initWithDelegate:(id)aDelegate {
     self = [super init];
     if (self) {
+        delegate = aDelegate;
+      
         self.applications = [NSMutableArray array];
         self.windows = [NSMutableArray array];
 
@@ -470,7 +475,7 @@
                                  SIWindow *focusedWindow = [SIWindow focusedWindow];
                                  [self markScreenForUpdate:focusedWindow.screen];
                                
-                                 [self onFocusedWindowChanged:focusedWindow];
+                                 [delegate onFocusedWindowChanged:focusedWindow];
 
                              }];
     [application observeNotification:kAXApplicationActivatedNotification
@@ -525,7 +530,7 @@
 //        window.floating = YES;
 //    }
 
-    [self onAddWindow:window];
+    [delegate onAddWindow:window];
   
     [application observeNotification:kAXUIElementDestroyedNotification
                          withElement:window
@@ -545,12 +550,12 @@
     [application observeNotification:kAXWindowMovedNotification
                          withElement:window
                              handler:^(SIAccessibilityElement *accessibilityElement) {
-                               [self onWindowMoved:window];
+                               [delegate onWindowMoved:window];
                              }];
   [application observeNotification:kAXWindowResizedNotification
                        withElement:window
                            handler:^(SIAccessibilityElement *accessibilityElement) {
-                               [self onWindowResized:window];
+                               [delegate onWindowResized:window];
                            }];
 
 }
